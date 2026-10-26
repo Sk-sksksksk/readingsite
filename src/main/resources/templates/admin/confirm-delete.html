@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex">
+    <title>Delete? · Owner area</title>
+    <link rel="stylesheet" th:href="@{/css/site.css}">
+    <link rel="stylesheet" th:href="@{/css/admin.css}">
+</head>
+<body>
+<div th:replace="~{admin/fragments :: header}"></div>
+
+<main id="main" class="wrap narrow">
+    <h1 th:text="|Delete this ${what}?|">Delete this piece?</h1>
+
+    <p>
+        “<strong th:text="${name}">Name</strong>” will be removed for good. This cannot be undone.
+        <span th:if="${note}" th:text="${note}"></span>
+    </p>
+
+    <form th:action="@{${action}}" method="post" class="actions-row">
+        <button type="submit" class="button danger">Yes, delete it</button>
+        <a th:href="@{${cancelUrl}}">No, keep it</a>
+    </form>
+</main>
+
+<div th:replace="~{fragments :: footer}"></div>
+</body>
+</html>

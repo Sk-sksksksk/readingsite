@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Something went wrong · Readingsite</title>
+    <link rel="stylesheet" th:href="@{/css/site.css}">
+</head>
+<body>
+<div th:replace="~{fragments :: header}"></div>
+
+<main id="main" class="wrap">
+    <th:block th:if="${status == 404}">
+        <h1>We couldn’t find that page</h1>
+        <p>It may have been moved, or the address may have a typing slip.</p>
+    </th:block>
+    <th:block th:unless="${status == 404}">
+        <h1>Something went wrong</h1>
+        <p>Please try again in a little while.</p>
+    </th:block>
+    <p>
+        <a class="button" th:href="@{/}">Go to the home page</a>
+        <a th:href="@{/browse}">Browse all writing</a>
+    </p>
+</main>
+
+<div th:replace="~{fragments :: footer}"></div>
+</body>
+</html>

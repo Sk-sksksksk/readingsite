@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex">
+    <title>Pieces · Owner area</title>
+    <link rel="stylesheet" th:href="@{/css/site.css}">
+    <link rel="stylesheet" th:href="@{/css/admin.css}">
+</head>
+<body>
+<div th:replace="~{admin/fragments :: header}"></div>
+
+<main id="main" class="wrap wide">
+    <h1>Pieces</h1>
+
+    <p class="notice" role="status" th:if="${notice}" th:text="${notice}">Saved.</p>
+
+    <p><a class="button" th:href="@{/admin/pieces/new}">Write a new piece</a></p>
+
+    <p th:if="${pieces.isEmpty()}">You have not written anything yet.</p>
+
+    <div class="table-scroll" role="region" aria-label="Pieces table" tabindex="0" th:unless="${pieces.isEmpty()}">
+        <table class="data-table">
+            <caption class="visually-hidden">All pieces, most recently updated first</caption>
+            <thead>
+            <tr>
+                <th scope="col">Title</th>
+                <th scope="col">Language</th>
+                <th scope="col">Type</th>
+                <th scope="col">Status</th>
+                <th scope="col">Updated</th>
+                <th scope="col">Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="p : ${pieces}">
+                <th scope="row" th:lang="${p.language.name().toLowerCase()}">
+                    <span th:text="${p.title}">Title</span>
+                    <span class="meta" th:if="${p.featured}"> · Featured</span>
+                </th>
+                <td th:text="${p.language.name() == 'HI' ? 'Hindi' : 'English'}">English</td>
+                <td th:text="${#strings.capitalize(p.type.name().toLowerCase())}">Story</td>
+                <td th:text="${p.status.name() == 'PUBLISHED' ? 'Published' : 'Draft'}">Draft</td>
+                <td><time th:datetime="${p.updatedAt}" th:text="${#strings.substring(p.updatedAt, 0, 10)}">2026-10-27</time></td>
+                <td class="row-actions">
+                    <a th:href="@{/admin/pieces/{id}/edit(id=${p.id})}">Edit<span class="visually-hidden"> <span th:text="${p.title}"></span></span></a>
+                    <a th:href="@{/admin/pieces/{id}/preview(id=${p.id})}">Preview<span class="visually-hidden"> <span th:text="${p.title}"></span></span></a>
+                    <a th:href="@{/admin/pieces/{id}/delete(id=${p.id})}">Delete<span class="visually-hidden"> <span th:text="${p.title}"></span></span></a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</main>
+
+<div th:replace="~{fragments :: footer}"></div>
+</body>
+</html>

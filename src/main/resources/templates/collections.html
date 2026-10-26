@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Collections · Readingsite</title>
+    <link rel="stylesheet" th:href="@{/css/site.css}">
+</head>
+<body>
+<div th:replace="~{fragments :: header}"></div>
+
+<main id="main" class="wrap">
+    <h1>Collections</h1>
+    <p class="lede">Small shelves of writing, gathered around a feeling or a time of day.</p>
+
+    <p th:if="${collections.isEmpty()}">No collections are published yet. Please check back soon.</p>
+
+    <ul class="card-grid" th:unless="${collections.isEmpty()}">
+        <li class="card" th:each="entry : ${collections}">
+            <h2 class="card-title">
+                <a th:href="@{/collections/{slug}(slug=${entry.collection().slug})}"
+                   th:text="${entry.collection().name}">Collection</a>
+            </h2>
+            <p class="meta" th:text="${entry.pieceCount() == 1 ? '1 piece' : entry.pieceCount() + ' pieces'}">3 pieces</p>
+            <p class="preview" th:if="${entry.collection().description != null}"
+               th:text="${entry.collection().description}">Description</p>
+        </li>
+    </ul>
+</main>
+
+<div th:replace="~{fragments :: footer}"></div>
+</body>
+</html>

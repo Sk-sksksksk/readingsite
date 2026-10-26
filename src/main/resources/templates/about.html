@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>About · Readingsite</title>
+    <link rel="stylesheet" th:href="@{/css/site.css}">
+</head>
+<body>
+<div th:replace="~{fragments :: header}"></div>
+
+<main id="main" class="wrap reading">
+    <h1>About</h1>
+
+    <div class="prose">
+        <p>
+            Readingsite is a small, quiet place for reading. It holds short stories, journal pages,
+            ghazals and quotes, written in Hindi and in English.
+        </p>
+
+        <h2>Two languages, kept apart</h2>
+        <p>
+            Each piece is written in one language and stays that way. Nothing here is a translation
+            of something else. If you read Hindi, you can choose <a lang="hi" th:href="@{/browse(lang='HI')}">हिन्दी</a>;
+            if you read English, you can choose <a th:href="@{/browse(lang='EN')}">English</a>; and if you read both,
+            everything is here for you.
+        </p>
+
+        <h2>Finding something to read</h2>
+        <p>
+            You can <a th:href="@{/browse}">browse</a> by language, type or mood, search for a word,
+            or start from <a th:href="@{/}">how you are feeling today</a>. The
+            <a th:href="@{/collections}">collections</a> are small shelves gathered by hand.
+        </p>
+
+        <h2>What you will not find</h2>
+        <p>
+            There are no comments, no likes, no audio and no accounts for readers. The site is meant to
+            be read slowly and left quietly.
+        </p>
+
+        <h2>Reading comfortably</h2>
+        <p>
+            On every piece you can make the text larger or smaller, and the site works with a keyboard
+            and with screen readers. If something gets in your way, I would like to know.
+        </p>
+
+        <!-- Owner: add a few lines about yourself here, and a way to get in touch if you want one. -->
+    </div>
+</main>
+
+<div th:replace="~{fragments :: footer}"></div>
+</body>
+</html>

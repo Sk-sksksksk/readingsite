@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title th:text="${collection.name + ' · Readingsite'}">Collection · Readingsite</title>
+    <link rel="stylesheet" th:href="@{/css/site.css}">
+</head>
+<body>
+<div th:replace="~{fragments :: header}"></div>
+
+<main id="main" class="wrap">
+    <p class="breadcrumb"><a th:href="@{/collections}">← All collections</a></p>
+
+    <h1 th:text="${collection.name}">Collection name</h1>
+    <p class="lede" th:if="${collection.description != null}" th:text="${collection.description}">Description</p>
+
+    <div th:replace="~{fragments :: languageFilter(${'/collections/' + collection.slug}, ${lang})}"></div>
+
+    <h2 class="visually-hidden">Pieces in this collection</h2>
+
+    <p class="result-count" role="status"
+       th:text="${pieces.size() == 1 ? '1 piece' : pieces.size() + ' pieces'}">3 pieces</p>
+
+    <p th:if="${pieces.isEmpty()}">
+        There is nothing in this language here yet. Try choosing “All languages”.
+    </p>
+
+    <div class="card-grid">
+        <th:block th:each="p : ${pieces}">
+            <div th:replace="~{fragments :: pieceCard(${p})}"></div>
+        </th:block>
+    </div>
+</main>
+
+<div th:replace="~{fragments :: footer}"></div>
+</body>
+</html>

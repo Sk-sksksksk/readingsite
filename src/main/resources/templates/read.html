@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title th:text="${piece.title + ' · Readingsite'}">Piece · Readingsite</title>
+    <link rel="stylesheet" th:href="@{/css/site.css}">
+</head>
+<body>
+<div th:replace="~{fragments :: header}"></div>
+
+<main id="main" class="wrap reading">
+
+    <p th:if="${preview}" class="preview-banner" role="status">
+        Preview. Only you can see this page while you are logged in.
+    </p>
+
+    <article>
+        <p class="meta">
+            <span th:text="${#strings.capitalize(piece.type.name().toLowerCase())}">Story</span>
+            ·
+            <span th:text="${piece.language.name() == 'HI' ? 'Hindi' : 'English'}">English</span>
+            <span th:if="${piece.readingTimeMinutes != null}"
+                  th:text="|· ${piece.readingTimeMinutes} min read|">· 2 min read</span>
+        </p>
+
+        <h1 th:lang="${piece.language.name().toLowerCase()}" th:text="${piece.title}">Title</h1>
+
+        <p class="byline" th:if="${piece.authorName != null}"
+           th:text="|by ${piece.authorName}|">by Author</p>
+
+        <div class="size-controls" role="group" aria-label="Text size">
+            <button type="button" id="size-down" aria-label="Make text smaller">A−</button>
+            <button type="button" id="size-up" aria-label="Make text larger">A+</button>
+        </div>
+
+        <div id="piece-body" class="piece-body"
+             th:classappend="${'type-' + piece.type.name().toLowerCase()}"
+             th:lang="${piece.language.name().toLowerCase()}"
+             th:text="${piece.body}">Body</div>
+    </article>
+
+    <section th:if="${!piece.moods.isEmpty()}" aria-labelledby="moods-heading">
+        <h2 id="moods-heading">Moods in this piece</h2>
+        <ul class="chips">
+            <li th:each="mood : ${piece.moods}">
+                <a class="chip" th:href="@{/moods/{slug}(slug=${mood.slug})}" th:text="${mood.name}">Peaceful</a>
+            </li>
+        </ul>
+    </section>
+
+    <section th:if="${!collections.isEmpty()}" aria-labelledby="coll-heading">
+        <h2 id="coll-heading">Part of</h2>
+        <ul class="plain-list">
+            <li th:each="c : ${collections}">
+                <a th:href="@{/collections/{slug}(slug=${c.slug})}" th:text="${c.name}">Collection</a>
+            </li>
+        </ul>
+    </section>
+
+    <section th:if="${!related.isEmpty()}" aria-labelledby="related-heading">
+        <h2 id="related-heading">If this stayed with you, try…</h2>
+        <div class="card-grid">
+            <th:block th:each="p : ${related}">
+                <div th:replace="~{fragments :: pieceCard(${p})}"></div>
+            </th:block>
+        </div>
+    </section>
+
+</main>
+
+<div th:replace="~{fragments :: footer}"></div>
+
+<script>
+    (function () {
+        var body = document.getElementById('piece-body');
+        var size = 1.25;
+        try {
+            var saved = parseFloat(localStorage.getItem('readingSize'));
+            if (saved) { size = saved; }
+        } catch (e) { }
+
+        function apply() {
+            body.style.fontSize = size + 'rem';
+            try { localStorage.setItem('readingSize', size); } catch (e) { }
+        }
+
+        document.getElementById('size-down').addEventListener('click', function () {
+            size = Math.max(1, size - 0.125);
+            apply();
+        });
+        document.getElementById('size-up').addEventListener('click', function () {
+            size = Math.min(2, size + 0.125);
+            apply();
+        });
+        apply();
+    })();
+</script>
+</body>
+</html>

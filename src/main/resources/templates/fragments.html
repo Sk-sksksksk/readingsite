@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<header th:fragment="header" class="site-header">
+    <a class="skip-link" href="#main">Skip to content</a>
+    <div class="wrap header-inner">
+        <a class="brand" th:href="@{/}">Readingsite</a>
+        <nav aria-label="Main">
+            <a th:href="@{/browse}">Browse</a>
+            <a th:href="@{/collections}">Collections</a>
+            <a th:href="@{/about}">About</a>
+        </nav>
+    </div>
+</header>
+
+<article th:fragment="pieceCard(p)" class="card">
+    <p class="meta">
+        <span th:text="${#strings.capitalize(p.type.name().toLowerCase())}">Story</span>
+        ·
+        <span th:text="${p.language.name() == 'HI' ? 'Hindi' : 'English'}">English</span>
+        <span th:if="${p.readingTimeMinutes != null}"
+              th:text="|· ${p.readingTimeMinutes} min read|">· 2 min read</span>
+    </p>
+    <h3 th:lang="${p.language.name().toLowerCase()}">
+        <a th:href="@{/read/{slug}(slug=${p.slug})}" th:text="${p.title}">Title</a>
+    </h3>
+    <p class="preview" th:lang="${p.language.name().toLowerCase()}"
+       th:text="${#strings.abbreviate(p.body, 140)}">Preview</p>
+</article>
+
+<nav th:fragment="languageFilter(base, current)" class="lang-filter" aria-label="Show pieces in">
+    <ul class="chips">
+        <li><a class="chip" th:href="@{${base}}"
+               th:attr="aria-current=${#strings.isEmpty(current)} ? 'true' : null">All languages</a></li>
+        <li><a class="chip" lang="hi" th:href="@{${base}(lang='HI')}"
+               th:attr="aria-current=${current == 'HI'} ? 'true' : null">हिन्दी</a></li>
+        <li><a class="chip" th:href="@{${base}(lang='EN')}"
+               th:attr="aria-current=${current == 'EN'} ? 'true' : null">English</a></li>
+    </ul>
+</nav>
+
+<footer th:fragment="footer" class="site-footer">
+    <div class="wrap">
+        <p>Quiet reading in Hindi and English.</p>
+    </div>
+</footer>
+
+</body>
+</html>

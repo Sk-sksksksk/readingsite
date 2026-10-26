@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Browse · Readingsite</title>
+    <link rel="stylesheet" th:href="@{/css/site.css}">
+</head>
+<body>
+<div th:replace="~{fragments :: header}"></div>
+
+<main id="main" class="wrap">
+    <h1>Browse</h1>
+
+    <form class="filters" method="get" th:action="@{/browse}" role="search">
+        <div class="field">
+            <label for="q">Search titles and text</label>
+            <input type="search" id="q" name="q" th:value="${q}">
+        </div>
+
+        <div class="field">
+            <label for="lang">Language</label>
+            <select id="lang" name="lang">
+                <option value="">Hindi and English</option>
+                <option value="HI" lang="hi" th:selected="${lang == 'HI'}">हिन्दी (Hindi)</option>
+                <option value="EN" th:selected="${lang == 'EN'}">English</option>
+            </select>
+        </div>
+
+        <div class="field">
+            <label for="type">Type</label>
+            <select id="type" name="type">
+                <option value="">All types</option>
+                <option th:each="t : ${types}"
+                        th:value="${t.name()}"
+                        th:selected="${type == t.name()}"
+                        th:text="${#strings.capitalize(t.name().toLowerCase())}">Story</option>
+            </select>
+        </div>
+
+        <div class="field">
+            <label for="mood">Mood</label>
+            <select id="mood" name="mood">
+                <option value="">Any mood</option>
+                <option th:each="m : ${moods}"
+                        th:value="${m.slug}"
+                        th:selected="${mood == m.slug}"
+                        th:text="${m.name}">Peaceful</option>
+            </select>
+        </div>
+
+        <div class="field actions">
+            <button type="submit" class="button">Show results</button>
+            <a th:href="@{/browse}">Clear filters</a>
+        </div>
+    </form>
+
+    <p class="result-count" role="status" aria-live="polite"
+       th:text="${result.total() == 1 ? '1 piece found' : result.total() + ' pieces found'}">6 pieces found</p>
+
+    <p th:if="${result.pieces().isEmpty()}">
+        Nothing matches those choices. Try removing a filter or searching for a different word.
+    </p>
+
+    <div class="card-grid">
+        <th:block th:each="p : ${result.pieces()}">
+            <div th:replace="~{fragments :: pieceCard(${p})}"></div>
+        </th:block>
+    </div>
+
+    <nav th:if="${result.totalPages() > 1}" class="pagination" aria-label="Pagination">
+        <a th:if="${result.page() > 1}"
+           th:href="@{/browse(lang=${lang},type=${type},mood=${mood},q=${q},page=${result.page() - 1})}">← Previous</a>
+        <span th:text="|Page ${result.page()} of ${result.totalPages()}|">Page 1 of 2</span>
+        <a th:if="${result.page() < result.totalPages()}"
+           th:href="@{/browse(lang=${lang},type=${type},mood=${mood},q=${q},page=${result.page() + 1})}">Next →</a>
+    </nav>
+</main>
+
+<div th:replace="~{fragments :: footer}"></div>
+</body>
+</html>

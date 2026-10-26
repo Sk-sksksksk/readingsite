@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title th:text="${mood.name + ' · Readingsite'}">Mood · Readingsite</title>
+    <link rel="stylesheet" th:href="@{/css/site.css}">
+</head>
+<body>
+<div th:replace="~{fragments :: header}"></div>
+
+<main id="main" class="wrap">
+    <p class="breadcrumb"><a th:href="@{/}">← Back to home</a></p>
+
+    <h1 th:text="${mood.name}">Peaceful</h1>
+    <p class="lede">Writing that suits this mood.</p>
+
+    <div th:replace="~{fragments :: languageFilter(${'/moods/' + mood.slug}, ${lang})}"></div>
+
+    <h2 class="visually-hidden">Pieces</h2>
+
+    <p class="result-count" role="status"
+       th:text="${result.total() == 1 ? '1 piece found' : result.total() + ' pieces found'}">3 pieces found</p>
+
+    <p th:if="${result.pieces().isEmpty()}">
+        Nothing here yet for this mood. Try another language, or pick a different mood below.
+    </p>
+
+    <div class="card-grid">
+        <th:block th:each="p : ${result.pieces()}">
+            <div th:replace="~{fragments :: pieceCard(${p})}"></div>
+        </th:block>
+    </div>
+
+    <nav th:if="${result.totalPages() > 1}" class="pagination" aria-label="Pagination">
+        <a th:if="${result.page() > 1}"
+           th:href="@{/moods/{slug}(slug=${mood.slug},lang=${lang},page=${result.page() - 1})}">← Previous</a>
+        <span th:text="|Page ${result.page()} of ${result.totalPages()}|">Page 1 of 2</span>
+        <a th:if="${result.page() < result.totalPages()}"
+           th:href="@{/moods/{slug}(slug=${mood.slug},lang=${lang},page=${result.page() + 1})}">Next →</a>
+    </nav>
+
+    <section aria-labelledby="other-moods-heading">
+        <h2 id="other-moods-heading">Other moods</h2>
+        <ul class="chips">
+            <li th:each="m : ${moods}" th:unless="${m.slug == mood.slug}">
+                <a class="chip" th:href="@{/moods/{slug}(slug=${m.slug})}" th:text="${m.name}">Hopeful</a>
+            </li>
+        </ul>
+    </section>
+</main>
+
+<div th:replace="~{fragments :: footer}"></div>
+</body>
+</html>

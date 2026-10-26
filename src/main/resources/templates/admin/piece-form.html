@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex">
+    <title th:text="${pieceId == null ? 'New piece · Owner area' : 'Edit piece · Owner area'}">Piece · Owner area</title>
+    <link rel="stylesheet" th:href="@{/css/site.css}">
+    <link rel="stylesheet" th:href="@{/css/admin.css}">
+</head>
+<body>
+<div th:replace="~{admin/fragments :: header}"></div>
+
+<main id="main" class="wrap">
+    <h1 th:text="${pieceId == null ? 'Write a new piece' : 'Edit piece'}">Write a new piece</h1>
+
+    <form th:action="${pieceId == null} ? @{/admin/pieces} : @{/admin/pieces/{id}(id=${pieceId})}"
+          th:object="${form}" method="post" class="stack" novalidate>
+
+        <div class="error-summary" role="alert" th:if="${#fields.hasErrors('*')}">
+            <h2>Please fix these before saving</h2>
+            <ul>
+                <li th:each="e : ${#fields.detailedErrors()}">
+                    <a th:href="'#' + ${e.fieldName}" th:text="${e.message}">Message</a>
+                </li>
+            </ul>
+        </div>
+
+        <div class="field">
+            <label for="title">Title</label>
+            <input type="text" id="title" th:field="*{title}" aria-describedby="title-error"
+                   th:attr="aria-invalid=${#fields.hasErrors('title')}">
+            <p class="field-error" id="title-error" th:if="${#fields.hasErrors('title')}" th:errors="*{title}">Error</p>
+        </div>
+
+        <div class="field">
+            <label for="slug">Web address</label>
+            <input type="text" id="slug" th:field="*{slug}" aria-describedby="slug-hint slug-error"
+                   autocapitalize="none" autocomplete="off" spellcheck="false"
+                   th:attr="aria-invalid=${#fields.hasErrors('slug')}">
+            <p class="hint" id="slug-hint">
+                Shown as /read/your-address. Latin letters, digits and hyphens only. Leave blank to create it from an
+                English title. Hindi titles need one, for example barish-ke-baad. Changing it later breaks old links.
+            </p>
+            <p class="field-error" id="slug-error" th:if="${#fields.hasErrors('slug')}" th:errors="*{slug}">Error</p>
+        </div>
+
+        <div class="field-row">
+            <div class="field">
+                <label for="language">Language</label>
+                <select id="language" th:field="*{language}" aria-describedby="language-error"
+                        th:attr="aria-invalid=${#fields.hasErrors('language')}">
+                    <option value="">Choose…</option>
+                    <option th:each="l : ${languages}" th:value="${l.name()}"
+                            th:text="${l.name() == 'HI' ? 'Hindi (हिन्दी)' : 'English'}">English</option>
+                </select>
+                <p class="field-error" id="language-error" th:if="${#fields.hasErrors('language')}" th:errors="*{language}">Error</p>
+            </div>
+
+            <div class="field">
+                <label for="type">Type</label>
+                <select id="type" th:field="*{type}" aria-describedby="type-error"
+                        th:attr="aria-invalid=${#fields.hasErrors('type')}">
+                    <option value="">Choose…</option>
+                    <option th:each="t : ${types}" th:value="${t.name()}"
+                            th:text="${#strings.capitalize(t.name().toLowerCase())}">Story</option>
+                </select>
+                <p class="field-error" id="type-error" th:if="${#fields.hasErrors('type')}" th:errors="*{type}">Error</p>
+            </div>
+        </div>
+
+        <div class="field">
+            <label for="body">Text</label>
+            <textarea id="body" th:field="*{body}" rows="18" aria-describedby="body-hint body-error"
+                      th:attr="aria-invalid=${#fields.hasErrors('body')}"></textarea>
+            <p class="hint" id="body-hint">
+                Plain text. Line breaks are kept exactly as you type them, which matters for ghazals and poems.
+            </p>
+            <p class="field-error" id="body-error" th:if="${#fields.hasErrors('body')}" th:errors="*{body}">Error</p>
+        </div>
+
+        <div class="field">
+            <label for="authorName">Author name (optional)</label>
+            <input type="text" id="authorName" th:field="*{authorName}" aria-describedby="authorName-error"
+                   th:attr="aria-invalid=${#fields.hasErrors('authorName')}">
+            <p class="field-error" id="authorName-error" th:if="${#fields.hasErrors('authorName')}" th:errors="*{authorName}">Error</p>
+        </div>
+
+        <fieldset>
+            <legend>Moods</legend>
+            <p class="hint">Choose the feelings this piece suits. Readers use these to find it.</p>
+            <ul class="check-list">
+                <li th:each="m : ${moods}">
+                    <input type="checkbox" th:field="*{moodIds}" th:value="${m.id}">
+                    <label th:for="${#ids.prev('moodIds')}" th:text="${m.name}">Peaceful</label>
+                </li>
+            </ul>
+        </fieldset>
+
+        <div class="field-row">
+            <div class="field">
+                <label for="status">Status</label>
+                <select id="status" th:field="*{status}" aria-describedby="status-hint status-error">
+                    <option th:each="s : ${statuses}" th:value="${s.name()}"
+                            th:text="${s.name() == 'PUBLISHED' ? 'Published (visible to readers)' : 'Draft (only you can see it)'}">Draft</option>
+                </select>
+                <p class="field-error" id="status-error" th:if="${#fields.hasErrors('status')}" th:errors="*{status}">Error</p>
+            </div>
+
+            <div class="field">
+                <label for="publishedOn">Publish date</label>
+                <input type="date" id="publishedOn" th:field="*{publishedOn}" aria-describedby="publishedOn-hint publishedOn-error"
+                       th:attr="aria-invalid=${#fields.hasErrors('publishedOn')}">
+                <p class="hint" id="publishedOn-hint">Blank means today, once published.</p>
+                <p class="field-error" id="publishedOn-error" th:if="${#fields.hasErrors('publishedOn')}" th:errors="*{publishedOn}">Error</p>
+            </div>
+
+            <div class="field">
+                <label for="readingTimeMinutes">Reading time (minutes)</label>
+                <input type="number" id="readingTimeMinutes" th:field="*{readingTimeMinutes}" min="1" max="600"
+                       aria-describedby="readingTimeMinutes-hint readingTimeMinutes-error"
+                       th:attr="aria-invalid=${#fields.hasErrors('readingTimeMinutes')}">
+                <p class="hint" id="readingTimeMinutes-hint">Blank means worked out from the length.</p>
+                <p class="field-error" id="readingTimeMinutes-error" th:if="${#fields.hasErrors('readingTimeMinutes')}"
+                   th:errors="*{readingTimeMinutes}">Error</p>
+            </div>
+        </div>
+
+        <div class="check-single">
+            <input type="checkbox" id="featured" th:field="*{featured}">
+            <label for="featured">Feature this piece on the home page</label>
+        </div>
+
+        <p class="actions-row">
+            <button type="submit" class="button">Save piece</button>
+            <a th:href="@{/admin/pieces}">Cancel</a>
+        </p>
+    </form>
+</main>
+
+<div th:replace="~{fragments :: footer}"></div>
+</body>
+</html>

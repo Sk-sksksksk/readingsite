@@ -1,0 +1,28 @@
+spring:
+  application:
+    name: readingsite
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/readingsite}
+    username: ${DB_USERNAME:postgres}
+    password: ${DB_PASSWORD:}
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+  flyway:
+    enabled: true
+
+readingsite:
+  owner:
+    username: ${OWNER_USERNAME:owner}
+    password: ${OWNER_PASSWORD:}
+
+server:
+  servlet:
+    session:
+      cookie:
+        http-only: true
+        same-site: lax
+  error:
+    include-message: never
+    include-stacktrace: never

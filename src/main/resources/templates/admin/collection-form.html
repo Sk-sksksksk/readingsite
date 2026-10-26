@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex">
+    <title th:text="${collectionId == null ? 'New collection · Owner area' : 'Edit collection · Owner area'}">Collection · Owner area</title>
+    <link rel="stylesheet" th:href="@{/css/site.css}">
+    <link rel="stylesheet" th:href="@{/css/admin.css}">
+</head>
+<body>
+<div th:replace="~{admin/fragments :: header}"></div>
+
+<main id="main" class="wrap wide">
+    <h1 th:text="${collectionId == null ? 'Create a collection' : 'Edit collection'}">Create a collection</h1>
+
+    <form th:action="${collectionId == null} ? @{/admin/collections} : @{/admin/collections/{id}(id=${collectionId})}"
+          th:object="${form}" method="post" class="stack" novalidate>
+
+        <div class="error-summary" role="alert" th:if="${#fields.hasErrors('*')}">
+            <h2>Please fix these before saving</h2>
+            <ul>
+                <li th:each="e : ${#fields.detailedErrors()}">
+                    <a th:href="'#' + ${e.fieldName}" th:text="${e.message}">Message</a>
+                </li>
+            </ul>
+        </div>
+
+        <div class="field">
+            <label for="name">Name</label>
+            <input type="text" id="name" th:field="*{name}" aria-describedby="name-error"
+                   th:attr="aria-invalid=${#fields.hasErrors('name')}">
+            <p class="field-error" id="name-error" th:if="${#fields.hasErrors('name')}" th:errors="*{name}">Error</p>
+        </div>
+
+        <div class="field">
+            <label for="slug">Web address</label>
+            <input type="text" id="slug" th:field="*{slug}" aria-describedby="slug-hint slug-error"
+                   autocapitalize="none" autocomplete="off" spellcheck="false"
+                   th:attr="aria-invalid=${#fields.hasErrors('slug')}">
+            <p class="hint" id="slug-hint">
+                Shown as /collections/your-address. Latin letters, digits and hyphens only. Leave blank to create it from an
+                English name.
+            </p>
+            <p class="field-error" id="slug-error" th:if="${#fields.hasErrors('slug')}" th:errors="*{slug}">Error</p>
+        </div>
+
+        <div class="field">
+            <label for="description">Description (optional)</label>
+            <textarea id="description" th:field="*{description}" rows="4" aria-describedby="description-error"
+                      th:attr="aria-invalid=${#fields.hasErrors('description')}"></textarea>
+            <p class="field-error" id="description-error" th:if="${#fields.hasErrors('description')}" th:errors="*{description}">Error</p>
+        </div>
+
+        <div class="field-row">
+            <div class="field">
+                <label for="sortOrder">Order among collections</label>
+                <input type="number" id="sortOrder" th:field="*{sortOrder}" min="0" max="9999"
+                       aria-describedby="sortOrder-hint sortOrder-error"
+                       th:attr="aria-invalid=${#fields.hasErrors('sortOrder')}">
+                <p class="hint" id="sortOrder-hint">Lower numbers are shown first.</p>
+                <p class="field-error" id="sortOrder-error" th:if="${#fields.hasErrors('sortOrder')}" th:errors="*{sortOrder}">Error</p>
+            </div>
+            <div class="check-single">
+                <input type="checkbox" id="published" th:field="*{published}">
+                <label for="published">Show this collection to readers</label>
+            </div>
+        </div>
+
+        <fieldset>
+            <legend>Pieces in this collection</legend>
+            <p class="hint">
+                Tick the pieces to include. In “Position”, lower numbers come first; pieces with the same number are
+                shown newest first. Only published pieces appear to readers.
+            </p>
+            <p th:if="${pieceOptions.isEmpty()}">You have no pieces yet.</p>
+
+            <div class="table-scroll" role="region" aria-label="Pieces to include" tabindex="0" th:unless="${pieceOptions.isEmpty()}">
+                <table class="data-table">
+                    <thead>
+                    <tr>
+                        <th scope="col">Include</th>
+                        <th scope="col">Title</th>
+                        <th scope="col">Language</th>
+                        <th scope="col">Status</th>
+                        <th scope="col">Position</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="p : ${pieceOptions}">
+                        <td>
+                            <input type="checkbox" th:field="*{pieceIds}" th:value="${p.id}">
+                        </td>
+                        <th scope="row" th:lang="${p.language.name().toLowerCase()}">
+                            <label th:for="${#ids.prev('pieceIds')}" th:text="${p.title}">Title</label>
+                        </th>
+                        <td th:text="${p.language.name() == 'HI' ? 'Hindi' : 'English'}">English</td>
+                        <td th:text="${p.status.name() == 'PUBLISHED' ? 'Published' : 'Draft'}">Published</td>
+                        <td>
+                            <input type="number" class="narrow-input" min="0" max="9999"
+                                   th:id="|position-${p.id}|"
+                                   th:name="|positions[${p.id}]|"
+                                   th:value="${form.positions[p.id]}"
+                                   th:attr="aria-label=|Position of ${p.title}|">
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </fieldset>
+
+        <p class="actions-row">
+            <button type="submit" class="button">Save collection</button>
+            <a th:href="@{/admin/collections}">Cancel</a>
+        </p>
+    </form>
+</main>
+
+<div th:replace="~{fragments :: footer}"></div>
+</body>
+</html>

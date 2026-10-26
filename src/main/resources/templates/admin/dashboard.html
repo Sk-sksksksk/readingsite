@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex">
+    <title>Owner area · Readingsite</title>
+    <link rel="stylesheet" th:href="@{/css/site.css}">
+    <link rel="stylesheet" th:href="@{/css/admin.css}">
+</head>
+<body>
+<div th:replace="~{admin/fragments :: header}"></div>
+
+<main id="main" class="wrap">
+    <h1>Owner area</h1>
+
+    <ul class="stat-list">
+        <li><strong th:text="${publishedCount}">3</strong> published</li>
+        <li><strong th:text="${draftCount}">1</strong> drafts</li>
+        <li><strong th:text="${collectionCount}">2</strong> collections</li>
+    </ul>
+
+    <p class="actions-row">
+        <a class="button" th:href="@{/admin/pieces/new}">Write a new piece</a>
+        <a class="button" th:href="@{/admin/collections/new}">Create a collection</a>
+    </p>
+
+    <section aria-labelledby="recent-heading">
+        <h2 id="recent-heading">Recently updated</h2>
+        <p th:if="${recent.isEmpty()}">Nothing yet. Write your first piece above.</p>
+        <ul class="plain-list" th:unless="${recent.isEmpty()}">
+            <li th:each="p : ${recent}">
+                <a th:href="@{/admin/pieces/{id}/edit(id=${p.id})}" th:lang="${p.language.name().toLowerCase()}"
+                   th:text="${p.title}">Title</a>
+                <span class="meta" th:text="|(${p.status.name() == 'PUBLISHED' ? 'published' : 'draft'})|">(draft)</span>
+            </li>
+        </ul>
+    </section>
+</main>
+
+<div th:replace="~{fragments :: footer}"></div>
+</body>
+</html>

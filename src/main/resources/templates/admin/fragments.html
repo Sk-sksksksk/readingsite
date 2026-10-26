@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<header th:fragment="header" class="site-header admin-header">
+    <a class="skip-link" href="#main">Skip to content</a>
+    <div class="wrap header-inner">
+        <a class="brand" th:href="@{/admin}">Owner area</a>
+        <nav aria-label="Owner">
+            <a th:href="@{/admin/pieces}">Pieces</a>
+            <a th:href="@{/admin/collections}">Collections</a>
+            <a th:href="@{/}">View site</a>
+            <form class="inline-form" th:action="@{/admin/logout}" method="post">
+                <button type="submit" class="link-button">Log out</button>
+            </form>
+        </nav>
+    </div>
+</header>
+
+</body>
+</html>

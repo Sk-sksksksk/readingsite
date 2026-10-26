@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex">
+    <title>Collections · Owner area</title>
+    <link rel="stylesheet" th:href="@{/css/site.css}">
+    <link rel="stylesheet" th:href="@{/css/admin.css}">
+</head>
+<body>
+<div th:replace="~{admin/fragments :: header}"></div>
+
+<main id="main" class="wrap wide">
+    <h1>Collections</h1>
+
+    <p class="notice" role="status" th:if="${notice}" th:text="${notice}">Saved.</p>
+
+    <p><a class="button" th:href="@{/admin/collections/new}">Create a collection</a></p>
+
+    <p th:if="${collections.isEmpty()}">There are no collections yet.</p>
+
+    <div class="table-scroll" role="region" aria-label="Collections table" tabindex="0" th:unless="${collections.isEmpty()}">
+        <table class="data-table">
+            <caption class="visually-hidden">All collections in display order</caption>
+            <thead>
+            <tr>
+                <th scope="col">Name</th>
+                <th scope="col">Order</th>
+                <th scope="col">Pieces</th>
+                <th scope="col">Status</th>
+                <th scope="col">Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="row : ${collections}">
+                <th scope="row" th:text="${row.collection().name}">Name</th>
+                <td th:text="${row.collection().sortOrder}">1</td>
+                <td th:text="${row.pieceCount()}">3</td>
+                <td th:text="${row.collection().published ? 'Published' : 'Hidden'}">Published</td>
+                <td class="row-actions">
+                    <a th:href="@{/admin/collections/{id}/edit(id=${row.collection().id})}">Edit<span class="visually-hidden"> <span th:text="${row.collection().name}"></span></span></a>
+                    <a th:if="${row.collection().published}" th:href="@{/collections/{slug}(slug=${row.collection().slug})}">View<span class="visually-hidden"> <span th:text="${row.collection().name}"></span></span></a>
+                    <a th:href="@{/admin/collections/{id}/delete(id=${row.collection().id})}">Delete<span class="visually-hidden"> <span th:text="${row.collection().name}"></span></span></a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</main>
+
+<div th:replace="~{fragments :: footer}"></div>
+</body>
+</html>
